@@ -62,7 +62,7 @@ export async function makeWordCounterController(app, {wordStatisticsFilePath, lo
   /** @param {string} url */
   async function countWordsFromUrlAndUpdateStatisticsFile(url) {
     try {
-      const response = await fetch(url)
+      const response = await fetch(url, {highWaterMark: 50 * 1024})
 
       const wordsCountMap = new Map()
 
@@ -113,7 +113,7 @@ export async function makeWordCounterController(app, {wordStatisticsFilePath, lo
 
       const readStream = createReadStream(filePath, {
         encoding: 'utf8',
-        highWaterMark: 10 * 1024 * 1024,
+        highWaterMark: 50 * 1024,
       })
 
       for await (const chunk of readStream) {

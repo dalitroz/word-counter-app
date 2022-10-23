@@ -6,7 +6,6 @@ import {makeWebApp} from '../src/word-counter.js'
 import pino from 'pino'
 import chaiSubset from 'chai-subset'
 import path from 'path'
-import {setTimeout} from 'timers/promises'
 
 use(chaiSubset)
 
@@ -109,7 +108,7 @@ describe('Integ test', () => {
 
     const wordStatisticsObject = JSON.parse(await readFile(wordStatisticsFilePath, 'utf8'))
 
-    expect(wordStatisticsObject).to.containSubset({i: 3, am: 1, robot: 1, with: 1, or: 1, more: 1})
+    expect(wordStatisticsObject).to.eql({i: 3, am: 1, robot: 1, with: 1, or: 1, more: 1})
 
     await app.inject({
       method: 'POST',
@@ -122,7 +121,7 @@ describe('Integ test', () => {
 
     const wordStatisticsObject2 = JSON.parse(await readFile(wordStatisticsFilePath, 'utf8'))
 
-    expect(wordStatisticsObject2).to.containSubset({
+    expect(wordStatisticsObject2).to.eql({
       i: 5,
       am: 1,
       robot: 1,
@@ -157,8 +156,6 @@ describe('Integ test', () => {
 
     expect(response.statusCode).to.equal(200)
 
-    await setTimeout(500)
-
     const responseStatistics1 = await app.inject({
       method: 'GET',
       url: '/word-statistics',
@@ -177,7 +174,7 @@ describe('Integ test', () => {
 
     expect(Number(responseStatistics2.body)).to.equal(2)
 
-    expect(wordStatisticsObject).to.containSubset({
+    expect(wordStatisticsObject).to.eql({
       lorem: 1,
       ipsum: 1,
       dolor: 1,
@@ -193,10 +190,10 @@ describe('Integ test', () => {
     expect(Object.entries(wordStatisticsObject).length).to.equal(11)
   })
 
-  it.only('should count words for  large input file', async () => {
+  it.skip('should count words for  large input file', async () => {
     const {app, wordStatisticsFilePath} = await createApp()
 
-    const inputFilePath = path.resolve('test/test-utils/large-input-file.txt')
+    const inputFilePath = path.resolve('test/test-utils/really-large-input.txt')
 
     const response = await app.inject({
       method: 'POST',
@@ -212,13 +209,14 @@ describe('Integ test', () => {
     const wordStatisticsObject = JSON.parse(await readFile(wordStatisticsFilePath, 'utf8'))
 
     expect(wordStatisticsObject).to.eql({
-      i: 555555,
-      am: 555555,
-      sasha: 555555,
-      fierce: 555555,
+      i: 83333334,
+      am: 83333334,
+      sasha: 83333333,
+      fierce: 83333333,
+      beyonce: 1,
     })
 
-    expect(Object.entries(wordStatisticsObject).length).to.equal(4)
+    expect(Object.entries(wordStatisticsObject).length).to.equal(5)
   })
   it('should count words for  small input url', async () => {
     const {app, wordStatisticsFilePath} = await createApp()
@@ -233,8 +231,6 @@ describe('Integ test', () => {
     })
 
     expect(response.statusCode).to.equal(200)
-
-    await setTimeout(4000)
 
     const wordStatisticsObject = JSON.parse(await readFile(wordStatisticsFilePath, 'utf8'))
 

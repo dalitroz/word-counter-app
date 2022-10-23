@@ -5,7 +5,7 @@ import {makeWordCounterController} from './word-counter-controller.js'
 export async function makeWebApp({logger, wordStatisticsFilePath}) {
   const app = fastify({clientErrorHandler})
 
-  // just an healthz url, so we know the server is up
+  // just an healthz url, so we know the server is up and smiling
   app.get('/healthz', async (_request, _reply) => {
     return {hello: 'world'}
   })
@@ -19,7 +19,10 @@ export async function makeWebApp({logger, wordStatisticsFilePath}) {
 
   app.addHook('onRequest', (request, _reply, done) => {
     try {
-      logger.info({event: 'request-received', url: request.url})
+      logger.info({
+        event: 'request-received',
+        url: request.url
+      })
       done()
     } catch (/** @type {any} */ error) {
       done(error)
@@ -27,7 +30,13 @@ export async function makeWebApp({logger, wordStatisticsFilePath}) {
   })
 
   app.addHook('onResponse', (request, response) => {
-    logger.info({event: 'request-handled', url: request.url, statusCode: response.statusCode})
+    logger.info({
+      event: 'request-handled',
+      url: request.url,
+      statusCode: response.statusCode,
+      body: request.body,
+      query: request.params,
+    })
   })
 
   /**
