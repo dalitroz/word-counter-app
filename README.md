@@ -22,9 +22,6 @@
 2. `get /word-statistics` will receive a payload (body) with the object `{word: <query-word>}`
 
 
-## Assumptions
-*  Input of type url for requests to the `/word-counter` api route  will always be valid, i.e `get(<inputUrl>)` will never return an error. I decided to make this assumption since the task requires handling large inputs, and in order to check if the request to the url is valid then ill have to read the file. 
-
 ## The project Includes  
 * `src` dir with all the server code:
     * `fastify` framework to run the server 
