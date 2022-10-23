@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "lib": ["es2022", "DOM"],
+    "target": "ES2020",
+    "moduleResolution": "node",
+    "module": "esnext",
+    "strict": true,
+    "strictNullChecks": true,
+    "declaration": true,
+    "sourceMap": true,
+    "declarationMap": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "allowJs": true,
+    "checkJs": true,
+    "emitDeclarationOnly": true,
+    "declarationDir": "types",
+    "maxNodeModuleJsDepth": 0,
+    "skipLibCheck": true,
+    "jsx": "preserve",
+    "rootDirs": ["src", "dist"],
+    "alwaysStrict": false
+  },
+  "include": ["src/**/*.js", "src/**/*.d.ts", "test/**/*.js", "test/**/*.d.ts"],
+  "exclude": ["node_modules"]
+}
