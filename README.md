@@ -1,7 +1,7 @@
 # Word counter service
 
 ## Installation and Usage Instructions
-1. Clone this repo using `git clone .. `
+1. Clone this repo using `git clone git@github.com:dalitroz/word-counter-app.git`
 2. Install all packages using the command: `npm i`
 3. To run the server use the command: `npm run start`
 
