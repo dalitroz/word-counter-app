@@ -1,4 +1,5 @@
-# Word counter service
+# Word Counter
+
 
 ## Installation and Usage Instructions
 1. Clone this repo using `git clone git@github.com:dalitroz/word-counter-app.git`
