@@ -72,16 +72,16 @@ export async function makeWordCounterController(app, {wordStatisticsFilePath, lo
         for await (const chunk of response.body) {
           const input = lastWordInChunk + chunk.toString()
 
-          if (input.endsWith(' ')) {
+          const lastIndexOfSpace = input.lastIndexOf(' ')
+
+          if (lastIndexOfSpace === -1 || input.endsWith(' ')) {
             countWords(input, wordsCountMap)
 
             lastWordInChunk = ''
           } else {
-            const splitChunk = input.split(' ')
+            const wordsFromChunk = input.substring(0, lastIndexOfSpace)
 
-            const wordsFromChunk = splitChunk.slice(0, -1).join(' ')
-
-            lastWordInChunk = splitChunk[splitChunk.length - 1]
+            lastWordInChunk = input.substring(lastIndexOfSpace + 1)
 
             countWords(wordsFromChunk, wordsCountMap)
           }
@@ -119,16 +119,16 @@ export async function makeWordCounterController(app, {wordStatisticsFilePath, lo
       for await (const chunk of readStream) {
         const input = lastWordInChunk + chunk
 
-        if (input.endsWith(' ')) {
+        const lastIndexOfSpace = input.lastIndexOf(' ')
+
+        if (lastIndexOfSpace === -1 || input.endsWith(' ')) {
           countWords(input, wordsCountMap)
 
           lastWordInChunk = ''
         } else {
-          const splitChunk = input.split(' ')
+          const wordsFromChunk = input.substring(0, lastIndexOfSpace)
 
-          const wordsFromChunk = splitChunk.slice(0, -1).join(' ')
-
-          lastWordInChunk = splitChunk[splitChunk.length - 1]
+          lastWordInChunk = input.substring(lastIndexOfSpace + 1)
 
           countWords(wordsFromChunk, wordsCountMap)
         }
@@ -185,8 +185,8 @@ export async function makeWordCounterController(app, {wordStatisticsFilePath, lo
 export function countWords(wordsString, wordsStatistics) {
   wordsString
     .toLowerCase()
-    .replace(/[\n]/g, ' ')
-    .split(' ')
+    .trim()
+    .split(/\s+/)
     .forEach((currentWord) => {
       const word = currentWord.replace(/[0-9\-\,]/g, '')
       if (word !== '') {

@@ -218,6 +218,7 @@ describe('Integ test', () => {
 
     expect(Object.entries(wordStatisticsObject).length).to.equal(5)
   })
+
   it('should count words for  small input url', async () => {
     const {app, wordStatisticsFilePath} = await createApp()
 

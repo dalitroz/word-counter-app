@@ -42,4 +42,13 @@
    * Run the bash command `yes "I am Sasha fierce" | head -c 1500000000 > really-large-input.txt` 
    * Replace the last word  in the file with the word 'Beyonce'. :) 
 ### Room for improvements ( If I had more time )
-* The response time for large inputs could probably be improved by splitting the input chunks further and running the `countWords` function in parallel. 
+* I implemented a map reduce to deal with the logging of the words count into the dictionary file. This could be improved further to optimize the response time for large inputs, by implementing a more complex mapper like using the dictionary for each chunk and reducing them into one at the end. (The response time I got to here is about 25-28s for a file of size 1GB)
+* Sync between requests could be improved:
+    
+    The problem:
+    It might be that two `word-counter` requests would get the same dictionary file and update with different results, so the first result written to th dictionary will be overridden.
+    
+    Solutions:
+    1. Use a db :) 
+    2. Create a temp dictionary for each request and sync the dictionaries with the main one frequently enough (so we get a small delay on the map updates but data is not lost)  
+

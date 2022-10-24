@@ -1,2 +1,4 @@
 node_modules
 types
+test/test-utils/really-large-input.txt
+test/test-utils/1-gb-input.txt
