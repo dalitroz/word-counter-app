@@ -41,6 +41,7 @@
    * Create a file with that name under `test-utils` dir
    * Run the bash command `yes "I am Sasha fierce" | head -c 1500000000 > really-large-input.txt` 
    * Replace the last word  in the file with the word 'Beyonce'. :) 
+
 ### Room for improvements ( If I had more time )
 * I implemented a map reduce to deal with the logging of the words count into the dictionary file. This could be improved further to optimize the response time for large inputs, by implementing a more complex mapper like using the dictionary for each chunk and reducing them into one at the end. (The response time I got to here is about 25-28s for a file of size 1GB)
 * Sync between requests could be improved:

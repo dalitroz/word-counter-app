@@ -61,63 +61,15 @@ export async function makeWordCounterController(app, {wordStatisticsFilePath, lo
 
   /** @param {string} url */
   async function countWordsFromUrlAndUpdateStatisticsFile(url) {
-    try {
-      const response = await fetch(url, {highWaterMark: 50 * 1024})
+    const response = await fetch(url, {highWaterMark: 50 * 1024})
 
-      const wordsCountMap = new Map()
+    const wordsCountMap = new Map()
 
-      let lastWordInChunk = ''
+    let lastWordInChunk = ''
 
-      if (response.body) {
-        for await (const chunk of response.body) {
-          const input = lastWordInChunk + chunk.toString()
-
-          const lastIndexOfSpace = input.lastIndexOf(' ')
-
-          if (lastIndexOfSpace === -1 || input.endsWith(' ')) {
-            countWords(input, wordsCountMap)
-
-            lastWordInChunk = ''
-          } else {
-            const wordsFromChunk = input.substring(0, lastIndexOfSpace)
-
-            lastWordInChunk = input.substring(lastIndexOfSpace + 1)
-
-            countWords(wordsFromChunk, wordsCountMap)
-          }
-        }
-
-        countWords(lastWordInChunk, wordsCountMap)
-
-        const wordsStatisticsMap = await getWordStatisticsMap(wordStatisticsFilePath)
-
-        wordsCountMap.forEach((count, word) =>
-          wordsStatisticsMap.set(word, count + (wordsStatisticsMap.get(word) ?? 0)),
-        )
-
-        await updateWordStatisticsFile(wordsStatisticsMap)
-      }
-    } catch (err) {
-      logger.error(
-        new Error(`Could not complete counting words from url '${url}', got an error: ${err}`),
-      )
-    }
-  }
-
-  /** @param {string} filePath */
-  async function countWordsFromFileAndUpdateStatisticsFile(filePath) {
-    try {
-      const wordsCountMap = new Map()
-
-      let lastWordInChunk = ''
-
-      const readStream = createReadStream(filePath, {
-        encoding: 'utf8',
-        highWaterMark: 50 * 1024,
-      })
-
-      for await (const chunk of readStream) {
-        const input = lastWordInChunk + chunk
+    if (response.body) {
+      for await (const chunk of response.body) {
+        const input = lastWordInChunk + chunk.toString()
 
         const lastIndexOfSpace = input.lastIndexOf(' ')
 
@@ -133,6 +85,7 @@ export async function makeWordCounterController(app, {wordStatisticsFilePath, lo
           countWords(wordsFromChunk, wordsCountMap)
         }
       }
+
       countWords(lastWordInChunk, wordsCountMap)
 
       const wordsStatisticsMap = await getWordStatisticsMap(wordStatisticsFilePath)
@@ -142,13 +95,46 @@ export async function makeWordCounterController(app, {wordStatisticsFilePath, lo
       )
 
       await updateWordStatisticsFile(wordsStatisticsMap)
-    } catch (err) {
-      logger.error(
-        new Error(
-          `Could not complete counting words from file '${filePath}', got an error: ${err}`,
-        ),
-      )
     }
+  }
+
+  /** @param {string} filePath */
+  async function countWordsFromFileAndUpdateStatisticsFile(filePath) {
+    const wordsCountMap = new Map()
+
+    let lastWordInChunk = ''
+
+    const readStream = createReadStream(filePath, {
+      encoding: 'utf8',
+      highWaterMark: 50 * 1024,
+    })
+
+    for await (const chunk of readStream) {
+      const input = lastWordInChunk + chunk
+
+      const lastIndexOfSpace = input.lastIndexOf(' ')
+
+      if (lastIndexOfSpace === -1 || input.endsWith(' ')) {
+        countWords(input, wordsCountMap)
+
+        lastWordInChunk = ''
+      } else {
+        const wordsFromChunk = input.substring(0, lastIndexOfSpace)
+
+        lastWordInChunk = input.substring(lastIndexOfSpace + 1)
+
+        countWords(wordsFromChunk, wordsCountMap)
+      }
+    }
+    countWords(lastWordInChunk, wordsCountMap)
+
+    const wordsStatisticsMap = await getWordStatisticsMap(wordStatisticsFilePath)
+
+    wordsCountMap.forEach((count, word) =>
+      wordsStatisticsMap.set(word, count + (wordsStatisticsMap.get(word) ?? 0)),
+    )
+
+    await updateWordStatisticsFile(wordsStatisticsMap)
   }
 
   /** @param {string} line */
